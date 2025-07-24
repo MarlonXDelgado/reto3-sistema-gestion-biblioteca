@@ -11,6 +11,10 @@ public class Book {
         this.author = author;
     }
 
+    public Book(String isbn2, String title2, String author2) {
+        //TODO Auto-generated constructor stub
+    }
+
     public Integer getIsbn() {
         return isbn;
     }
