@@ -6,70 +6,95 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.dev.mxd.exception.NotFoundException;
-import com.dev.mxd.model.Book;
 
 class BookServiceTest {
 
-    private BookService bookService;
+    private BookService service;
 
     @BeforeEach
     void setUp() {
-        bookService = new BookService();
+        service = new BookService();
     }
 
     @Test
     void testAddBook() {
         // Given
-        String isbn = "1234567890";
-        String title = "Test Book";
-        String author = "Test Author";
+        var isbn = "1234567890";
+        var title = "Test Book";
+        var author = "Test Author";
 
         // When
-        bookService.addBook(isbn, title, author);
+        service.addBook(isbn, title, author);
 
         // Then
-        assertEquals(1, bookService.getAllBooks().size());
-        Book book = bookService.getAllBooks().get(0);
-        assertEquals(isbn, book.getIsbn());
-        assertEquals(title, book.getTitle());
+        var book = service.getBookByIsbn(isbn);
+        assertNotNull(book);
+        assertEquals(title, book.getTitle()); 
         assertEquals(author, book.getAuthor());
     }
 
     @Test
-    void testGetBookByIsbn() throws NotFoundException {
+    void testDeleteExistedBook() throws NotFoundException {
         // Given
-        String isbn = "1234567890";
-        bookService.addBook(isbn, "Test Book", "Test Author");
+        var isbn = "1234567890";
+        var title = "Test Book";
+        var author = "Test Author";
+        service.addBook(isbn, title, author);
 
         // When
-        Book foundBook = bookService.getBookByIsbn(isbn);
+        service.deleteBook(isbn);
 
         // Then
-        assertNotNull(foundBook);
-        assertEquals(isbn, foundBook.getIsbn());
+        try {
+            service.getBookByIsbn(isbn);
+            fail();
+        } catch (NotFoundException e) {
+            assertTrue(true);
+        }
     }
 
     @Test
-    void testGetBookByIsbnNotFound() {
+    void testDeleteNonExistedBook() {
         // Given
-        String nonExistentIsbn = "9999999999";
+        var isbn = "1234567890";
 
         // When & Then
-        assertThrows(NotFoundException.class, () -> {
-            bookService.getBookByIsbn(nonExistentIsbn);
-        });
+        assertThrows(NotFoundException.class, () -> service.deleteBook(isbn));
     }
 
     @Test
     void testGetAllBooks() {
         // Given
-        bookService.addBook("1", "Book 1", "Author 1");
-        bookService.addBook("2", "Book 2", "Author 2");
+        var isbn = "1234567890";
+        var title = "Test Book";
+        var author = "Test Author";
+        service.addBook(isbn, title, author);
 
         // When
-        var books = bookService.getAllBooks();
+        var books = service.getAllBooks();
 
         // Then
-        assertEquals(2, books.size());
+        assertEquals(1, books.size());
+        assertEquals(isbn, books.get(0).getIsbn());
+        assertEquals(title, books.get(0).getTitle());
+        assertEquals(author, books.get(0).getAuthor());
+    }
+
+    @Test
+    void testGetBookByIsbn() throws NotFoundException {
+        // Given
+        var isbn = "1234567890";
+        var title = "Test Book";
+        var author = "Test Author";
+        service.addBook(isbn, title, author);
+
+        // When
+        var book = service.getBookByIsbn(isbn);
+
+        // Then
+        assertNotNull(book);
+        assertEquals(isbn, book.getIsbn());
+        assertEquals(title, book.getTitle());
+        assertEquals(author, book.getAuthor());
     }
 } 

@@ -1,5 +1,6 @@
 package com.dev.mxd.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,15 +29,21 @@ public class LoanService {
         for (var loan : loans) {
             if (loan.getUser().getId().equals(id)
                   && loan.getBook().getIsbn().equals(isbn)
-                  && loan.getLoanDate().equals(LoanState.STARTED)) {
+                  && loan.getState().equals(LoanState.STARTED)) {
                 loan.setState(LoanState.FINISHED);
                 return;
-
             }
-            
         }
         throw new NotFoundException("no hay un prestamo del libro:"
                                     +isbn + " para el usuario: "+id);
+    }
+
+    public List<Loan> getLoans() {
+        return loans;
+    }
+
+    public LocalDate getLoanDate() {
+        return loans.get(0).getLoanDate();
     }
 
 
