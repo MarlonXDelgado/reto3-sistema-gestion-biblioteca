@@ -20,6 +20,9 @@ public class LoanService {
     }
 
     public void addLoan(String id, String isbn) throws NotFoundException {
+        if (id == null || isbn == null) {
+            throw new IllegalArgumentException("Los parámetros no pueden ser nulos");
+        }
         var user = userService.getUserById(id);
         var book = bookService.getBookByIsbn(isbn);
 
@@ -33,6 +36,9 @@ public class LoanService {
     }
 
     public void returnBook(String id, String isbn) throws NotFoundException {
+        if (id == null || isbn == null) {
+            throw new IllegalArgumentException("Los parámetros no pueden ser nulos");
+        }
         for (var loan : loans) {
             if (loan.getUser().getId().equals(id)
                   && loan.getBook().getIsbn().equals(isbn)
@@ -50,9 +56,9 @@ public class LoanService {
     }
 
     public LocalDate getLoanDate() {
+        if (loans.isEmpty()) {
+            throw new IndexOutOfBoundsException("No hay préstamos registrados");
+        }
         return loans.get(0).getLoanDate();
     }
-
-
-
 }

@@ -15,6 +15,12 @@ public class BookService {
     }
 
     public void addBook(String isbn, String title, String author) {
+        if (isbn == null || title == null || author == null) {
+            throw new IllegalArgumentException("Los parámetros no pueden ser nulos");
+        }
+        if (isbn.trim().isEmpty() || title.trim().isEmpty() || author.trim().isEmpty()) {
+            throw new IllegalArgumentException("Los parámetros no pueden estar vacíos");
+        }
         books.add(new Book(isbn, title, author)); 
     }
 
@@ -23,6 +29,9 @@ public class BookService {
     }
 
     public Book getBookByIsbn(String isbn) throws NotFoundException{
+        if (isbn == null) {
+            throw new IllegalArgumentException("El ISBN no puede ser nulo");
+        }
         for (var book : books) {
             if (book.getIsbn().equals(isbn)) {
                 return book;
@@ -32,6 +41,9 @@ public class BookService {
     }
 
     public void deleteBook(String isbn) throws NotFoundException{
+        if (isbn == null) {
+            throw new IllegalArgumentException("El ISBN no puede ser nulo");
+        }
         for (var book : books) {
             if (book.getIsbn().equals(isbn)) {
                 books.remove(book);
