@@ -6,6 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.dev.mxd.exception.NotFoundException;
+import com.dev.mxd.model.User;
+
+import java.time.LocalDate;
 
 class UserServiceTest {
 
@@ -198,6 +201,150 @@ class UserServiceTest {
         // When & Then
         assertThrows(IllegalArgumentException.class, () -> {
             service.deleteUser(id);
+        });
+    }
+
+    @Test
+    void testAddUserWithDate() {
+        // Given
+        String id = "123";
+        String name = "Marlon Delgado";
+        String email = "marlondev@gmail.com";
+        LocalDate registerDate = LocalDate.now();
+
+        // When
+        service.addUser(id, name, email, registerDate);
+
+        // Then
+        User user = service.getUserById(id);
+        assertNotNull(user);
+        assertEquals(id, user.getId());
+        assertEquals(name, user.getName());
+        assertEquals(email, user.getEmail());
+        assertEquals(registerDate, user.getRegisterDate());
+    }
+
+    @Test
+    void testUpdateUserEmailWithNullParameters() {
+        // Given
+        String id = "123";
+        String email = null;
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateUserEmail(id, email);
+        });
+    }
+
+    @Test
+    void testUpdateUserEmailWithEmptyEmail() {
+        // Given
+        String id = "123";
+        String email = "";
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateUserEmail(id, email);
+        });
+    }
+
+    @Test
+    void testUpdateUserNameWithNullParameters() {
+        // Given
+        String id = null;
+        String name = null;
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateUserName(id, name);
+        });
+    }
+
+    @Test
+    void testUpdateUserNameWithEmptyName() {
+        // Given
+        String id = "123";
+        String name = "";
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateUserName(id, name);
+        });
+    }
+
+    @Test
+    void testAddUserWithDateWithNullParameters() {
+        // Given
+        String id = null;
+        String name = null;
+        String email = null;
+        LocalDate registerDate = null;
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email, registerDate);
+        });
+    }
+
+    @Test
+    void testAddUserWithDateWithEmptyParameters() {
+        // Given
+        String id = "";
+        String name = "";
+        String email = "";
+        LocalDate registerDate = LocalDate.now();
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email, registerDate);
+        });
+    }
+
+    @Test
+    void testUpdateUserEmailWithNullIdOnly() {
+        // Given
+        String id = null;
+        String email = "xaviidev@email.com";
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateUserEmail(id, email);
+        });
+    }
+
+    @Test
+    void testUpdateUserEmailWithNullEmailOnly() {
+        // Given
+        String id = "123";
+        String email = null;
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateUserEmail(id, email);
+        });
+    }
+
+    @Test
+    void testUpdateUserNameWithNullIdOnly() {
+        // Given
+        String id = null;
+        String name = "Xavier Ruiz";
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateUserName(id, name);
+        });
+    }
+
+    @Test
+    void testUpdateUserNameWithNullNameOnly() {
+        // Given
+        String id = "123";
+        String name = null;
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateUserName(id, name);
         });
     }
 }
