@@ -130,4 +130,74 @@ class UserServiceTest {
         assertEquals(nameUpdated, user.getName());
         assertEquals(email, user.getEmail());
     }
+
+    @Test
+    void testGetUserByIdNotFound() {
+        // Given
+        var id = "456";
+
+        // When & Then
+        assertThrows(NotFoundException.class, () -> {
+            service.getUserById(id);
+        });
+    }
+
+    @Test
+    void testAddUserWithNullParameters() {
+        // Given
+        String id = null;
+        String name = null;
+        String email = null;
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email);
+        });
+    }
+
+    @Test
+    void testAddUserWithEmptyParameters() {
+        // Given
+        String id = "";
+        String name = "";
+        String email = "";
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email);
+        });
+    }
+
+    @Test
+    void testGetUserByIdWithNullId() {
+        // Given
+        String id = null;
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.getUserById(id);
+        });
+    }
+
+    @Test
+    void testDeleteUserNotFound() {
+        // Given
+        var nonExistentId = "123";
+
+        // When & Then
+        assertThrows(NotFoundException.class, () -> {
+            service.deleteUser(nonExistentId);
+        });
+    }
+
+    @Test
+    void testDeleteUserWithNullId() {
+        // Given
+        String id = null;
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.deleteUser(id);
+        });
+    }
 }
