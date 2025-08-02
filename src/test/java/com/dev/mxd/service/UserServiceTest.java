@@ -347,4 +347,143 @@ class UserServiceTest {
             service.updateUserName(id, name);
         });
     }
+
+    @Test
+    void testAddUserWithNullNameOnly() {
+        // Given
+        String id = "123";
+        String name = null;
+        String email = "marlondev@gmail.com";
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email);
+        });
+    }
+
+    @Test
+    void testAddUserWithNullEmailOnly() {
+        // Given
+        String id = "123";
+        String name = "Marlon Delgado";
+        String email = null;
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email);
+        });
+    }
+
+    @Test
+    void testAddUserWithDateWithNullNameOnly() {
+        // Given
+        String id = "123";
+        String name = null;
+        String email = "marlondev@gmail.com";
+        LocalDate registerDate = LocalDate.now();
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email, registerDate);
+        });
+    }
+
+    @Test
+    void testAddUserWithDateWithNullEmailOnly() {
+        // Given
+        String id = "123";
+        String name = "Marlon Delgado";
+        String email = null;
+        LocalDate registerDate = LocalDate.now();
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email, registerDate);
+        });
+    }
+
+    @Test
+    void testAddUserWithDateWithNullRegisterDateOnly() {
+        // Given
+        String id = "123";
+        String name = "Marlon Delgado";
+        String email = "marlondev@gmail.com";
+        LocalDate registerDate = null;
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email, registerDate);
+        });
+    }
+
+    @Test
+    void testAddUserWithEmptyNameOnly() {
+        // Given
+        String id = "123";
+        String name = "";
+        String email = "marlondev@gmail.com";
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email);
+        });
+    }
+
+    @Test
+    void testAddUserWithEmptyEmailOnly() {
+        // Given
+        String id = "123";
+        String name = "Marlon Delgado";
+        String email = "";
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email);
+        });
+    }
+
+    @Test
+    void testAddUserWithDateWithEmptyNameOnly() {
+        // Given
+        String id = "123";
+        String name = "";
+        String email = "marlondev@gmail.com";
+        LocalDate registerDate = LocalDate.now();
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email, registerDate);
+        });
+    }
+
+    @Test
+    void testAddUserWithDateWithEmptyEmailOnly() {
+        // Given
+        String id = "123";
+        String name = "Marlon Delgado";
+        String email = "";
+        LocalDate registerDate = LocalDate.now();
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.addUser(id, name, email, registerDate);
+        });
+    }
+
+    @Test
+    void testGetUserByIdWithMultipleUsers() {
+        // Given
+        service.addUser("123", "Marlon Delgado", "marlondev@gmail.com");
+        service.addUser("456", "Kevin Sanchez", "ksanchez@gmail.com");
+        service.addUser("789", "Xavier Ruiz", "xaviidev@email.com");
+
+        // When
+        User user = service.getUserById("456");
+
+        // Then
+        assertNotNull(user);
+        assertEquals("456", user.getId());
+        assertEquals("Kevin Sanchez", user.getName());
+        assertEquals("ksanchez@gmail.com", user.getEmail());
+    }
 }
