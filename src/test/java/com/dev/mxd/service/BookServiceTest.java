@@ -1,5 +1,6 @@
 package com.dev.mxd.service;
 
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -218,4 +219,32 @@ class BookServiceTest {
         assertEquals(title1, book1.getTitle());
         assertEquals(title2, book2.getTitle());
     }
-} 
+    // --- addBook: cada subcondición del if de nulos ---
+    @Test
+    void testAddBookWithNullIsbn() {
+        assertThrows(IllegalArgumentException.class, () -> service.addBook(null, "Titulo", "Autor"));
+    }
+    @Test
+    void testAddBookWithNullAuthor() {
+        assertThrows(IllegalArgumentException.class, () -> service.addBook("123", "Titulo", null));
+    }
+    @Test
+    void testAddBookWithNullTitle() {
+        assertThrows(IllegalArgumentException.class, () -> service.addBook("123", null, "Autor"));
+    }
+    // --- addBook: cada subcondición del if de vacíos (usa trim().isEmpty()) ---
+    @Test
+    void testAddBookWithBlankIsbn() {
+        assertThrows(IllegalArgumentException.class, () -> service.addBook("   ", "Titulo", "Autor"));
+    }
+    @Test
+    void testAddBookWithBlankTitle() {
+        assertThrows(IllegalArgumentException.class, () -> service.addBook("123", "   ", "Autor"));
+    }
+    @Test
+    void testAddBookWithBlankAuthor() {
+        assertThrows(IllegalArgumentException.class, () -> service.addBook("123", "Titulo", "   "));
+    }
+
+}
+
