@@ -15,12 +15,30 @@ import com.dev.mxd.model.Book;
 import com.dev.mxd.model.LoanState;
 import com.dev.mxd.model.User;
 
+
+/**
+ * Clase de pruebas unitarias para {@link LoanService}.
+ * 
+ * Aquí validamos la lógica principal de los préstamos:
+ * - Creación de préstamos.
+ * - Devolución de libros.
+ * - Manejo de casos con usuarios/libros inexistentes.
+ * - Reglas para evitar prestar libros ya prestados.
+ * - Validación de parámetros nulos.
+ * 
+ * Se utilizan mocks de {@link BookService} y {@link UserService} para aislar
+ * las pruebas de la lógica interna de esos servicios.
+ */
 public class LoanServiceTest {
 
     private LoanService service;
     private BookService bookService;
     private UserService userService;
 
+    /**
+     * Antes de cada prueba se crean mocks de BookService y UserService,
+     * y se inyectan en una nueva instancia de LoanService.
+     */
     @BeforeEach
     void setUp() {
         bookService = Mockito.mock(BookService.class);
@@ -28,6 +46,10 @@ public class LoanServiceTest {
         service = new LoanService(bookService, userService);
     }
 
+     /**
+     * Verifica que se pueda crear un préstamo cuando el usuario y el libro existen.
+     * Debe registrarse un préstamo en estado STARTED.
+     */
     @DisplayName("Agregar un prestamo con usuario y libro existentes")
     @Test
     void testAddLoanWithExistingUserAndExistingBook() {
@@ -54,6 +76,9 @@ public class LoanServiceTest {
 
     }
 
+    /**
+     * Verifica que devolver un libro existente actualice el estado del préstamo a FINISHED.
+     */
     @Test
     void testReturnBookWithExistingLoan() throws NotFoundException {
         // Given
@@ -81,6 +106,9 @@ public class LoanServiceTest {
 
     }
 
+      /**
+     * Verifica que intentar devolver un libro que nunca fue prestado lance NotFoundException.
+     */
     @Test
     void testReturnBookWithNonExistingLoan() {
         // Given
@@ -92,6 +120,9 @@ public class LoanServiceTest {
         
     } 
 
+      /**
+     * Verifica que no se pueda crear un préstamo si el usuario no existe.
+     */
     @Test
     void testAddLoanWithNonExistentUser() {
         // Given
@@ -105,6 +136,10 @@ public class LoanServiceTest {
         // When & Then
         assertThrows(NotFoundException.class, () -> service.addLoan(userId, isbn));
     }
+
+     /**
+     * Verifica que no se pueda crear un préstamo si el libro no existe.
+     */
     @Test
     void testAddLoanWithNonExistentBook() {
         // Given
@@ -118,6 +153,11 @@ public class LoanServiceTest {
         // When & Then
         assertThrows(NotFoundException.class, () -> service.addLoan(userId, isbn));
     }
+
+      /**
+     * Verifica que no se pueda prestar un libro que ya está prestado.
+     * El mensaje de error debe indicar que está prestado.
+     */
     @Test
     @DisplayName("No permite prestar un libro ya prestado (lanza NotFoundException)")
     void testAddLoanWithAlreadyLoanedBookThrowsNotFoundException() {
@@ -143,25 +183,32 @@ public class LoanServiceTest {
           "Mensaje inesperado: " + ex.getMessage()
         );
 
-        // Verificaciones no estrictas (puede que el segundo intento corte antes)
+        // Verificaciones no estrictas
         Mockito.verify(userService, Mockito.atLeastOnce()).getUserById(id);
         Mockito.verify(bookService, Mockito.atLeastOnce()).getBookByIsbn(isbn);
     }
-    // ---------- addLoan: parámetros nulos (tu servicio solo valida null) ----------
+
+     /**
+     * Valida que addLoan lance excepción si los parámetros son nulos.
+     */
     @Test
     void testAddLoanWithNullParams() {
         assertThrows(IllegalArgumentException.class, () -> service.addLoan(null, "111"));
         assertThrows(IllegalArgumentException.class, () -> service.addLoan("u1", null));
-        // NO probamos " " (blank) porque tu lógica no lo valida
     }
-    // ---------- returnBook: parámetros nulos (tu servicio solo valida null) ----------
+
+     /**
+     * Valida que returnBook lance excepción si los parámetros son nulos.
+     */
     @Test
     void testReturnBookWithNullParams() {
         assertThrows(IllegalArgumentException.class, () -> service.returnBook(null, "111"));
         assertThrows(IllegalArgumentException.class, () -> service.returnBook("u1", null));
-        // NO probamos " " (blank) porque tu lógica no lo valida
     }
-    // ---------- addLoan: libro ya prestado (tu servicio lanza NotFoundException) ----------
+
+    /**
+     * Verifica que el mensaje al intentar prestar un libro ya prestado contenga ISBN y la palabra "prestado".
+     */
     @Test
     void testAddLoanWithAlreadyLoanedBookThrowsNotFoundException_FuzzyMessage() {
         var id = "123";
@@ -175,12 +222,14 @@ public class LoanServiceTest {
         service.addLoan(id, isbn); // préstamo activo
 
         var ex = assertThrows(NotFoundException.class, () -> service.addLoan(id, isbn));
-        // El servicio usa: "El libro con el ISBN: <isbn> ya esta prestado"
         var msg = String.valueOf(ex.getMessage()).toLowerCase();
-        assertTrue(msg.contains("isbn") && msg.contains("prestado")); // robusto
+        assertTrue(msg.contains("isbn") && msg.contains("prestado")); 
         assertTrue(msg.contains(isbn));
     }
-    // ---------- returnBook: ISBN distinto (no hay préstamo que coincida) ----------
+
+     /**
+     * Verifica que devolver un libro con ISBN distinto al prestado lance NotFoundException.
+     */
     @Test
     void testReturnBookWithDifferentIsbnThrowsNotFound() {
         var id = "u1";
@@ -199,7 +248,10 @@ public class LoanServiceTest {
         assertTrue(msg.contains(isbnWrong));
         assertTrue(msg.contains(id));
     }
-    // ---------- returnBook: usuario distinto (no hay préstamo que coincida) ----------
+
+     /**
+     * Verifica que devolver un libro con un usuario distinto al que lo prestó lance NotFoundException.
+     */
     @Test
     void testReturnBookWithDifferentUserThrowsNotFound() {
         var idOk = "u1";
@@ -218,7 +270,10 @@ public class LoanServiceTest {
         assertTrue(msg.contains(isbn));
         assertTrue(msg.contains(idWrong));
     }
-    // ---------- returnBook: devolver dos veces (2º debe fallar) ----------
+
+    /**
+     * Verifica que intentar devolver dos veces el mismo libro falle en el segundo intento.
+     */
     @Test
     void testReturnBookTwiceThrowsNotFound() throws NotFoundException {
         var id = "u1"; var isbn = "111";
@@ -230,7 +285,10 @@ public class LoanServiceTest {
 
         assertThrows(NotFoundException.class, () -> service.returnBook(id, isbn)); // segunda falla
     }
-    // ---------- getLoanDate: con préstamo devuelve fecha ----------
+
+     /**
+     * Verifica que getLoanDate devuelva una fecha válida después de agregar un préstamo.
+     */
     @Test
     void testGetLoanDateAfterAddLoan() {
         var id = "u1"; var isbn = "111";
@@ -240,13 +298,20 @@ public class LoanServiceTest {
         service.addLoan(id, isbn);
 
         var date = service.getLoanDate();
-        assertNotNull(date); // tu Loan asigna fecha al construirse
+        assertNotNull(date); 
     }
-    // ---------- getLoanDate: vacío lanza IndexOutOfBoundsException ----------
+
+    /**
+     * Verifica que getLoanDate lance IndexOutOfBoundsException si no hay préstamos.
+     */
     @Test
     void testGetLoanDateWhenNoLoansThrowsIndexOutOfBounds() {
         assertThrows(IndexOutOfBoundsException.class, () -> service.getLoanDate());
     }
+
+    /**
+     * Verifica que se puedan prestar libros diferentes aunque ya exista otro préstamo activo.
+     */
     @Test
     @DisplayName("addLoan no bloquea cuando hay préstamos activos de OTRO ISBN (rama false del if)")
     void testAddLoanSkipsWhenOtherIsbnActive_LoopsFalseBranch() {
@@ -278,6 +343,10 @@ public class LoanServiceTest {
         assertEquals(LoanState.STARTED, loans.get(0).getState());
         assertEquals(LoanState.STARTED, loans.get(1).getState());
     }
+
+     /**
+     * Verifica que se pueda volver a prestar el mismo libro si el préstamo anterior fue finalizado.
+     */
     @Test
     @DisplayName("addLoan permite volver a prestar MISMO ISBN si el préstamo previo ya está FINISHED (rama false del if)")
     void testAddLoanAllowsSameIsbnAfterFinished_LoopsFalseBranch() throws NotFoundException {

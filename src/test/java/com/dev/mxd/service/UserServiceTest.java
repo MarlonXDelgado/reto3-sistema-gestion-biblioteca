@@ -10,15 +10,27 @@ import com.dev.mxd.model.User;
 
 import java.time.LocalDate;
 
+/**
+ * Pruebas unitarias para UserService.
+ * 
+ * Se validan:
+ * - Flujos correctos: agregar, obtener, listar, actualizar y eliminar usuarios.
+ * - Casos de error: parámetros nulos/vacíos, usuarios no encontrados.
+ * - Cobertura de sobrecarga de métodos con fecha de registro.
+ */
 class UserServiceTest {
 
     private UserService service;
 
     @BeforeEach
     void setUp() {
+        // Antes de cada test iniciamos un servicio limpio en memoria
         service = new UserService();
     }
 
+     /**
+     * Verifica que se pueda agregar un usuario y recuperarlo correctamente.
+     */
     @Test
     void testAddUser() {
         // Given
@@ -37,6 +49,9 @@ class UserServiceTest {
         assertEquals(email, user.getEmail());
     }
 
+    /**
+     * Verifica que se pueda obtener un usuario existente por su ID.
+     */
     @Test
     void testGetUserById() throws NotFoundException {
         // Given
@@ -55,6 +70,9 @@ class UserServiceTest {
         assertEquals(email, user.getEmail());
     }
 
+    /**
+     * Verifica que al agregar múltiples usuarios se puedan listar correctamente.
+     */
     @Test
     void testGetAllUsers() {
         // Given
@@ -81,6 +99,9 @@ class UserServiceTest {
         assertEquals(email2, users.get(1).getEmail());
     }
 
+    /**
+     * Verifica que se pueda eliminar un usuario existente.
+     */
     @Test
     void testDeleteUserById() throws NotFoundException {
         // Given
@@ -98,6 +119,9 @@ class UserServiceTest {
         });
     }
 
+     /**
+     * Verifica que se pueda actualizar el email de un usuario existente.
+     */
     @Test
     void testUpdateUserEmail() throws NotFoundException {
         // Given
@@ -116,6 +140,9 @@ class UserServiceTest {
         assertEquals(name, user.getName());
     }
 
+    /**
+     * Verifica que se pueda actualizar el nombre de un usuario existente.
+     */
     @Test
     void testUpdateUserName() throws NotFoundException {
         // Given
@@ -134,6 +161,9 @@ class UserServiceTest {
         assertEquals(email, user.getEmail());
     }
 
+    /**
+     * Verifica que al buscar un usuario inexistente se lance NotFoundException.
+     */
     @Test
     void testGetUserByIdNotFound() {
         // Given
@@ -145,6 +175,9 @@ class UserServiceTest {
         });
     }
 
+     /**
+     * Verifica que no se pueda agregar un usuario con todos los parámetros nulos.
+     */
     @Test
     void testAddUserWithNullParameters() {
         // Given
@@ -158,6 +191,9 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Verifica que no se pueda agregar un usuario con todos los parámetros vacíos.
+     */
     @Test
     void testAddUserWithEmptyParameters() {
         // Given
@@ -171,6 +207,9 @@ class UserServiceTest {
         });
     }
 
+      /**
+     * Verifica que no se pueda buscar un usuario con ID nulo.
+     */
     @Test
     void testGetUserByIdWithNullId() {
         // Given
@@ -182,6 +221,9 @@ class UserServiceTest {
         });
     }
 
+     /**
+     * Verifica que no se pueda eliminar un usuario inexistente.
+     */
     @Test
     void testDeleteUserNotFound() {
         // Given
@@ -193,6 +235,9 @@ class UserServiceTest {
         });
     }
 
+     /**
+     * Verifica que no se pueda eliminar un usuario con ID nulo.
+     */
     @Test
     void testDeleteUserWithNullId() {
         // Given
@@ -204,6 +249,9 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Verifica que se pueda agregar un usuario con fecha de registro.
+     */
     @Test
     void testAddUserWithDate() {
         // Given
@@ -224,6 +272,9 @@ class UserServiceTest {
         assertEquals(registerDate, user.getRegisterDate());
     }
 
+      /**
+     * Verifica que no se pueda actualizar el email con parámetros nulos o vacíos.
+     */
     @Test
     void testUpdateUserEmailWithNullParameters() {
         // Given
@@ -235,7 +286,6 @@ class UserServiceTest {
             service.updateUserEmail(id, email);
         });
     }
-
     @Test
     void testUpdateUserEmailWithEmptyEmail() {
         // Given
@@ -248,6 +298,9 @@ class UserServiceTest {
         });
     }
 
+      /**
+     * Verifica que no se pueda actualizar el nombre con parámetros nulos o vacíos.
+     */
     @Test
     void testUpdateUserNameWithNullParameters() {
         // Given
@@ -259,7 +312,6 @@ class UserServiceTest {
             service.updateUserName(id, name);
         });
     }
-
     @Test
     void testUpdateUserNameWithEmptyName() {
         // Given
@@ -272,6 +324,10 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Verifica que no se pueda agregar un usuario con fecha de registro
+     * cuando todos los parámetros son nulos.
+     */
     @Test
     void testAddUserWithDateWithNullParameters() {
         // Given
@@ -286,6 +342,10 @@ class UserServiceTest {
         });
     }
 
+     /**
+     * Verifica que no se pueda agregar un usuario con fecha de registro
+     * cuando los parámetros de texto están vacíos.
+     */
     @Test
     void testAddUserWithDateWithEmptyParameters() {
         // Given
@@ -300,6 +360,9 @@ class UserServiceTest {
         });
     }
 
+     /**
+     * Verifica que actualizar el email falle si el ID es nulo.
+     */
     @Test
     void testUpdateUserEmailWithNullIdOnly() {
         // Given
@@ -312,6 +375,9 @@ class UserServiceTest {
         });
     }
 
+     /**
+     * Verifica que actualizar el email falle si el email es nulo.
+     */
     @Test
     void testUpdateUserEmailWithNullEmailOnly() {
         // Given
@@ -324,6 +390,9 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Verifica que actualizar el email falle si el email es nulo.
+     */
     @Test
     void testUpdateUserNameWithNullIdOnly() {
         // Given
@@ -336,6 +405,9 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Verifica que actualizar el nombre falle si el nombre es nulo.
+     */
     @Test
     void testUpdateUserNameWithNullNameOnly() {
         // Given
@@ -348,6 +420,9 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Verifica que no se pueda agregar un usuario si el nombre es nulo.
+     */
     @Test
     void testAddUserWithNullNameOnly() {
         // Given
@@ -361,6 +436,9 @@ class UserServiceTest {
         });
     }
 
+     /**
+     * Verifica que no se pueda agregar un usuario si el email es nulo.
+     */
     @Test
     void testAddUserWithNullEmailOnly() {
         // Given
@@ -374,6 +452,11 @@ class UserServiceTest {
         });
     }
 
+    
+    /**
+     * Verifica que no se pueda agregar un usuario con fecha de registro
+     * si el nombre es nulo.
+     */
     @Test
     void testAddUserWithDateWithNullNameOnly() {
         // Given
@@ -388,6 +471,10 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Verifica que no se pueda agregar un usuario con fecha de registro
+     * si el email es nulo.
+     */
     @Test
     void testAddUserWithDateWithNullEmailOnly() {
         // Given
@@ -402,6 +489,10 @@ class UserServiceTest {
         });
     }
 
+      /**
+     * Verifica que no se pueda agregar un usuario con fecha de registro
+     * si la fecha es nula.
+     */
     @Test
     void testAddUserWithDateWithNullRegisterDateOnly() {
         // Given
@@ -416,6 +507,9 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Verifica que no se pueda agregar un usuario si el nombre está vacío.
+     */
     @Test
     void testAddUserWithEmptyNameOnly() {
         // Given
@@ -429,6 +523,9 @@ class UserServiceTest {
         });
     }
 
+     /**
+     * Verifica que no se pueda agregar un usuario si el email está vacío.
+     */
     @Test
     void testAddUserWithEmptyEmailOnly() {
         // Given
@@ -442,6 +539,10 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Verifica que no se pueda agregar un usuario con fecha de registro
+     * si el nombre está vacío.
+     */
     @Test
     void testAddUserWithDateWithEmptyNameOnly() {
         // Given
@@ -456,6 +557,10 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Verifica que no se pueda agregar un usuario con fecha de registro
+     * si el email está vacío.
+     */
     @Test
     void testAddUserWithDateWithEmptyEmailOnly() {
         // Given
@@ -470,6 +575,10 @@ class UserServiceTest {
         });
     }
 
+     /**
+     * Verifica que se pueda obtener un usuario específico cuando
+     * hay múltiples usuarios registrados.
+     */
     @Test
     void testGetUserByIdWithMultipleUsers() {
         // Given

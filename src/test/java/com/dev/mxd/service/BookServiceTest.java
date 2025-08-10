@@ -7,6 +7,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.dev.mxd.exception.NotFoundException;
+/**
+ * Pruebas unitarias para BookService.
+ * La idea es validar los flujos felices y los casos de error:
+ * - Agregar libros
+ * - Buscar por ISBN
+ * - Listar
+ * - Eliminar
+ * - Validar parámetros nulos/vacíos
+ */
 
 class BookServiceTest {
 
@@ -14,38 +23,53 @@ class BookServiceTest {
 
     @BeforeEach
     void setUp() {
+        // Antes de cada test iniciamos un servicio "limpio" en memoria
         service = new BookService();
     }
 
+     /**
+     * Verifica que se pueda agregar un libro y recuperarlo correctamente.
+     */
     @Test
     void testAddBook() {
         // Given
+        // datos de un libro válido
         var isbn = "1234567890";
         var title = "Test Book";
         var author = "Test Author";
 
         // When
+        // agregamos el libro
         service.addBook(isbn, title, author);
 
         // Then
+         // Assert: recuperamos y confirmamos que quedó bien guardado
         var book = service.getBookByIsbn(isbn);
         assertNotNull(book);
         assertEquals(title, book.getTitle()); 
         assertEquals(author, book.getAuthor());
     }
 
+    
+    /**
+     * Verifica que se pueda eliminar un libro existente
+     * y que no sea posible recuperarlo después.
+     */
     @Test
     void testDeleteExistedBook() throws NotFoundException {
         // Given
+        // primero agregamos un libro
         var isbn = "1234567890";
         var title = "Test Book";
         var author = "Test Author";
         service.addBook(isbn, title, author);
 
         // When
+        // luego lo borramos
         service.deleteBook(isbn);
 
         // Then
+        //Esperamos que al buscarlo lance excepción
         try {
             service.getBookByIsbn(isbn);
             fail();
@@ -54,6 +78,10 @@ class BookServiceTest {
         }
     }
 
+      /**
+     * Verifica que al intentar eliminar un libro que no existe
+     * se lance la excepción correspondiente.
+     */
     @Test
     void testDeleteNonExistedBook() {
         // Given
@@ -63,6 +91,10 @@ class BookServiceTest {
         assertThrows(NotFoundException.class, () -> service.deleteBook(isbn));
     }
 
+    /**
+     * Verifica que si el libro existe pero el ISBN dado no coincide,
+     * se lance la excepción NotFoundException.
+     */
     @Test
     void deleteWithExistingBookButNotGivenIsbn() {
         // Given
@@ -73,6 +105,9 @@ class BookServiceTest {
         assertThrows(NotFoundException.class, () -> service.deleteBook(isbn));
     }
 
+    /**
+     * Verifica que al agregar un libro, este se pueda listar correctamente.
+     */
     @Test
     void testGetAllBooks() {
         // Given
@@ -91,6 +126,9 @@ class BookServiceTest {
         assertEquals(author, books.get(0).getAuthor());
     }
 
+      /**
+     * Verifica que se pueda obtener un libro existente por su ISBN.
+     */
     @Test
     void testGetBookByIsbn() throws NotFoundException {
         // Given
@@ -109,6 +147,9 @@ class BookServiceTest {
         assertEquals(author, book.getAuthor());
     }
 
+     /**
+     * Verifica que al buscar un ISBN incorrecto se lance NotFoundException.
+     */
     @Test
     void testGetBookByIsbnWithWrongIsbn() {
         // Given
@@ -119,6 +160,10 @@ class BookServiceTest {
         assertThrows(NotFoundException.class, () -> service.getBookByIsbn(isbn));
     }
 
+      /**
+     * Verifica que la excepción tenga un mensaje claro cuando
+     * se busca un libro que no existe.
+     */
     @Test
     void testGetBookByIsbnNotFound() {
         // Given
@@ -133,6 +178,9 @@ class BookServiceTest {
         assertTrue(exception.getMessage().contains("no fue encontrado"));
     }
 
+    /**
+     * Verifica que no se pueda agregar un libro con parámetros nulos.
+     */
     @Test
     void testAddBookWithNullParameters() {
         // Given
@@ -146,6 +194,9 @@ class BookServiceTest {
         });
     }
 
+    /**
+     * Verifica que no se pueda agregar un libro con parámetros vacíos.
+     */
     @Test
     void testAddBookWithEmptyParameters() {
         // Given
@@ -159,6 +210,9 @@ class BookServiceTest {
         });
     }
 
+    /**
+     * Verifica que no se pueda buscar un libro con ISBN nulo.
+     */
     @Test
     void testGetBookByIsbnWithNullIsbn() {
         // Given
@@ -170,6 +224,9 @@ class BookServiceTest {
         });
     }
 
+     /**
+     * Verifica que no se pueda eliminar un libro con ISBN nulo.
+     */
     @Test
     void testDeleteBookWithNullIsbn() {
         // Given
@@ -181,6 +238,10 @@ class BookServiceTest {
         });
     }
 
+     /**
+     * Verifica que la lista de libros devuelta no sea nula
+     * y esté vacía cuando no se ha agregado ninguno.
+     */
     @Test
     void testGetAllBooksWhenEmpty() {
         // Given - service starts empty
@@ -193,6 +254,10 @@ class BookServiceTest {
         assertEquals(0, books.size());
     }
 
+    
+    /**
+     * Verifica que se puedan agregar varios libros y listarlos correctamente.
+     */
     @Test
     void testMultipleBooksOperations() {
         // Given
@@ -219,28 +284,32 @@ class BookServiceTest {
         assertEquals(title1, book1.getTitle());
         assertEquals(title2, book2.getTitle());
     }
-    // --- addBook: cada subcondición del if de nulos ---
+    //// --- Casos adicionales para cubrir cada condición de validación ---
     @Test
     void testAddBookWithNullIsbn() {
         assertThrows(IllegalArgumentException.class, () -> service.addBook(null, "Titulo", "Autor"));
     }
+
     @Test
     void testAddBookWithNullAuthor() {
         assertThrows(IllegalArgumentException.class, () -> service.addBook("123", "Titulo", null));
     }
+
     @Test
     void testAddBookWithNullTitle() {
         assertThrows(IllegalArgumentException.class, () -> service.addBook("123", null, "Autor"));
     }
-    // --- addBook: cada subcondición del if de vacíos (usa trim().isEmpty()) ---
+
     @Test
     void testAddBookWithBlankIsbn() {
         assertThrows(IllegalArgumentException.class, () -> service.addBook("   ", "Titulo", "Autor"));
     }
+
     @Test
     void testAddBookWithBlankTitle() {
         assertThrows(IllegalArgumentException.class, () -> service.addBook("123", "   ", "Autor"));
     }
+    
     @Test
     void testAddBookWithBlankAuthor() {
         assertThrows(IllegalArgumentException.class, () -> service.addBook("123", "Titulo", "   "));
