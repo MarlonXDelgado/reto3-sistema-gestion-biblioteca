@@ -56,7 +56,7 @@ src/
 
 1. Clonar el repositorio:
    ```bash
-   [git clone https://github.com/tuusuario/reto3-sistema-gestion-biblioteca.git](https://github.com/MarlonXDelgado/reto3-sistema-gestion-biblioteca.git)
+   (https://github.com/MarlonXDelgado/reto3-sistema-gestion-biblioteca.git)
    cd reto3-sistema-gestion-biblioteca
    ```
 
@@ -90,7 +90,9 @@ mvn test jacoco:report
 
 El proyecto alcanza **100% de cobertura** en instrucciones y ramas, garantizando que todos los escenarios están cubiertos.
 
-![Reporte de cobertura](WhatsApp%20Image%202025-08-09%20at%2010.50.31%20AM.jpeg)
+![Reporte de cobertura]
+<img width="1044" height="177" alt="image" src="https://github.com/user-attachments/assets/00bcde78-e8b8-462d-893b-57eb719f0c4f" />
+
 
 ---
 
