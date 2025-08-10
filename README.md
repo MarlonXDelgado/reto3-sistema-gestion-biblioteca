@@ -56,7 +56,7 @@ src/
 
 1. Clonar el repositorio:
    ```bash
-   git clone https://github.com/tuusuario/reto3-sistema-gestion-biblioteca.git
+   [git clone https://github.com/tuusuario/reto3-sistema-gestion-biblioteca.git](https://github.com/MarlonXDelgado/reto3-sistema-gestion-biblioteca.git)
    cd reto3-sistema-gestion-biblioteca
    ```
 
